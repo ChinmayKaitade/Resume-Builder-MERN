@@ -14,6 +14,7 @@ const Home = () => {
       <Features />
       <Testimonials />
       <CallToAction />
+      <Footer />
     </div>
   );
 };
