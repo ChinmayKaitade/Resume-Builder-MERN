@@ -6,7 +6,7 @@ import {
   getPublicResumeById,
   getResumeById,
   updateResume,
-} from "../controllers/resumeController";
+} from "../controllers/resumeController.js";
 import upload from "../configs/multer.js";
 
 const resumeRouter = express.Router();
