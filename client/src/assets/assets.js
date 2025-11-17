@@ -1,8 +1,17 @@
+// Import the image asset for use in the dummy data.
 import dummy_profile from "./dummy_profile.png";
 
+/**
+ * @fileoverview DUMMY DATA: Provides sample resume data objects for application testing
+ * and initial state population during development.
+ *
+ * NOTE: In a production environment, this data array should be replaced by live
+ * data fetched from an authenticated API endpoint or database.
+ */
 export const dummyResumeData = [
   {
-    // ----------------------------------------------------- Resume 1 ------------------------------------------------------
+    // ----------------------------------------------------- Resume 1 (Alex Smith) ------------------------------------------------------
+    // Resume data for a Full Stack Developer.
     personal_info: {
       full_name: "Alex Smith",
       email: "alex@example.com",
@@ -11,12 +20,12 @@ export const dummyResumeData = [
       linkedin: "https://www.linkedin.com",
       website: "https://www.example.com",
       profession: "Full Stack Developer",
-      image: dummy_profile,
+      image: dummy_profile, // Local file path or imported asset.
     },
-    _id: "68d2a31a1c4dd38875bb037e",
-    userId: "68c180acdf1775dfd02c6d87",
+    _id: "68d2a31a1c4dd38875bb037e", // Unique ID for database mapping.
+    userId: "68c180acdf1775dfd02c6d87", // ID of the owning user.
     title: "Alex's Resume",
-    public: true,
+    public: true, // Flag indicating if the resume is publicly shareable.
     professional_summary:
       "Highly analytical Data Analyst with 6 years of experience transforming complex datasets into actionable insights using SQL, Python, and advanced visualization tools. ",
     skills: [
@@ -38,7 +47,7 @@ export const dummyResumeData = [
         end_date: "Present",
         description:
           "Architected, developed, and deployed innovative full-stack applications at Example Technologies.\ncreating robust back-end systems and intuitive front- end interfaces to deliver meaningful digital experiences ",
-        is_current: true,
+        is_current: true, // Flag indicating the user is still in this role.
         _id: "68d2a31a1c4dd38875bb037f",
       },
       {
@@ -57,7 +66,7 @@ export const dummyResumeData = [
         institution: "Example Institute of Technology",
         degree: "B.TECH",
         field: "CSE",
-        graduation_date: "2023-05",
+        graduation_date: "2023-05", // Date format: YYYY-MM
         gpa: "8.7",
         _id: "68d2a31a1c4dd38875bb0380",
       },
@@ -78,8 +87,8 @@ export const dummyResumeData = [
         _id: "68d2a31a1c4dd38875bb0382",
       },
     ],
-    template: "minimal-image",
-    accent_color: "#14B8A6",
+    template: "minimal-image", // The selected resume template ID.
+    accent_color: "#14B8A6", // The user-selected theme color.
     project: [
       {
         name: "Team Task Management System",
@@ -96,11 +105,12 @@ export const dummyResumeData = [
         _id: "68d4f89dc8f0d46dc8a8b147",
       },
     ],
-    updatedAt: "2025-09-23T13:39:38.395Z",
+    updatedAt: "2025-09-23T13:39:38.395Z", // Timestamp metadata.
     createdAt: "2025-09-23T13:39:38.395Z",
   },
   {
-    // ----------------------------------------------------- Resume 2 ------------------------------------------------------
+    // ----------------------------------------------------- Resume 2 (Jordan Lee) ------------------------------------------------------
+    // Resume data for a Frontend Engineer.
     personal_info: {
       full_name: "Jordan Lee",
       email: "jordan.lee@example.com",
@@ -191,7 +201,8 @@ export const dummyResumeData = [
     createdAt: "2025-09-25T15:10:21.184Z",
   },
   {
-    // ----------------------------------------------------- Resume 3 ------------------------------------------------------
+    // ----------------------------------------------------- Resume 3 (Riley Morgan) ------------------------------------------------------
+    // Resume data for a Backend Developer.
     personal_info: {
       full_name: "Riley Morgan",
       email: "riley.morgan@example.com",

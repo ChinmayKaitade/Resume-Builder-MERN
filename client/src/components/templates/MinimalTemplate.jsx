@@ -1,21 +1,46 @@
+import React from "react";
+
+/**
+ * @component MinimalTemplate 📏
+ * @description A modern, single-column resume template focusing on clean typography
+ * and minimal ornamentation. It uses font weight and size variations for hierarchy
+ * rather than lines or colors, using the accent color only for major section titles.
+ *
+ * @param {object} props
+ * @param {object} props.data - The complete resume data object.
+ * @param {string} props.accentColor - Hex code for the primary color theme (used for headings).
+ */
 const MinimalTemplate = ({ data, accentColor }) => {
+  // --- Utility Function ---
+
+  /**
+   * @function formatDate
+   * Converts a YYYY-MM date string to a short display format (e.g., "Jan 2024").
+   * @param {string} dateStr - The date string in "YYYY-MM" format.
+   * @returns {string} Formatted date string or an empty string if null.
+   */
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
     const [year, month] = dateStr.split("-");
+    // NOTE: month - 1 is necessary because JavaScript Date months are 0-indexed.
     return new Date(year, month - 1).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
     });
   };
 
+  // --- Rendered Template UI ---
+
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white text-gray-900 font-light">
-      {/* Header */}
+      {/* Header: Name and Contact Info */}
       <header className="mb-10">
+        {/* Full Name: Large, thin font weight is characteristic of this minimal style. */}
         <h1 className="text-4xl font-thin mb-4 tracking-wide">
           {data.personal_info?.full_name || "Your Name"}
         </h1>
 
+        {/* Contact Details Row: Simple text separators/spacing */}
         <div className="flex flex-wrap gap-6 text-sm text-gray-600">
           {data.personal_info?.email && <span>{data.personal_info.email}</span>}
           {data.personal_info?.phone && <span>{data.personal_info.phone}</span>}
@@ -31,7 +56,7 @@ const MinimalTemplate = ({ data, accentColor }) => {
         </div>
       </header>
 
-      {/* Professional Summary */}
+      {/* Professional Summary (Placed high for prominence) */}
       {data.professional_summary && (
         <section className="mb-10">
           <p className=" text-gray-700">{data.professional_summary}</p>
@@ -41,6 +66,7 @@ const MinimalTemplate = ({ data, accentColor }) => {
       {/* Experience */}
       {data.experience && data.experience.length > 0 && (
         <section className="mb-10">
+          {/* Section Heading: Small, uppercase, wide tracking, accent color */}
           <h2
             className="text-sm uppercase tracking-widest mb-6 font-medium"
             style={{ color: accentColor }}
@@ -49,16 +75,19 @@ const MinimalTemplate = ({ data, accentColor }) => {
           </h2>
 
           <div className="space-y-6">
+            {/* Map through each job entry */}
             {data.experience.map((exp, index) => (
               <div key={index}>
                 <div className="flex justify-between items-baseline mb-1">
                   <h3 className="text-lg font-medium">{exp.position}</h3>
                   <span className="text-sm text-gray-500">
+                    {/* Date Range Logic */}
                     {formatDate(exp.start_date)} -{" "}
                     {exp.is_current ? "Present" : formatDate(exp.end_date)}
                   </span>
                 </div>
                 <p className="text-gray-600 mb-2">{exp.company}</p>
+                {/* Job Description (Preserves line breaks from textarea) */}
                 {exp.description && (
                   <div className="text-gray-700 leading-relaxed whitespace-pre-line">
                     {exp.description}
@@ -81,12 +110,14 @@ const MinimalTemplate = ({ data, accentColor }) => {
           </h2>
 
           <div className="space-y-4">
+            {/* Map through each project entry */}
             {data.project.map((proj, index) => (
               <div
                 key={index}
                 className="flex flex-col gap-2 justify-between items-baseline"
               >
                 <h3 className="text-lg font-medium ">{proj.name}</h3>
+                {/* NOTE: Project descriptions are rendered without bullet points in this template */}
                 <p className="text-gray-600">{proj.description}</p>
               </div>
             ))}
@@ -105,6 +136,7 @@ const MinimalTemplate = ({ data, accentColor }) => {
           </h2>
 
           <div className="space-y-4">
+            {/* Map through each education entry */}
             {data.education.map((edu, index) => (
               <div key={index} className="flex justify-between items-baseline">
                 <div>
@@ -135,6 +167,7 @@ const MinimalTemplate = ({ data, accentColor }) => {
             Skills
           </h2>
 
+          {/* Skills List: Simple list separated by a medium bullet ( • ) */}
           <div className="text-gray-700">{data.skills.join(" • ")}</div>
         </section>
       )}

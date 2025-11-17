@@ -1,20 +1,45 @@
 import { Mail, Phone, MapPin } from "lucide-react";
+import React from "react";
 
+/**
+ * @component MinimalImageTemplate 🖼️
+ * @description A modern, two-column resume template with a focus on visual
+ * separation and a prominent, circular profile image. Displays contact and
+ * education data in a left sidebar.
+ *
+ * @param {object} props
+ * @param {object} props.data - The complete resume data object.
+ * @param {string} props.accentColor - Hex code for the primary color theme.
+ */
 const MinimalImageTemplate = ({ data, accentColor }) => {
+  // --- Utility Function ---
+
+  /**
+   * @function formatDate
+   * Converts a YYYY-MM string (from input type="month") to a display format (e.g., "Jan 2024").
+   * @param {string} dateStr - The date string in "YYYY-MM" format.
+   * @returns {string} Formatted date string or an empty string if null.
+   */
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
     const [year, month] = dateStr.split("-");
+    // NOTE: month - 1 is necessary because JavaScript Date months are 0-indexed.
     return new Date(year, month - 1).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
     });
   };
 
+  // --- Rendered Template UI ---
+
   return (
     <div className="max-w-5xl mx-auto bg-white text-zinc-800">
+      {/* Main Grid: Defines the 1/3 (Sidebar) and 2/3 (Main Content) columns */}
       <div className="grid grid-cols-3">
-        <div className="col-span-1  py-10">
-          {/* Image */}
+        {/* Top-Left Section: Dedicated to the Profile Image */}
+        <div className="col-span-1 py-10">
+          {/* Image Display Logic */}
+          {/* Case 1: Image exists and is a string (pre-uploaded URL) */}
           {data.personal_info?.image &&
           typeof data.personal_info.image === "string" ? (
             <div className="mb-6">
@@ -22,22 +47,27 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                 src={data.personal_info.image}
                 alt="Profile"
                 className="w-32 h-32 object-cover rounded-full mx-auto"
-                style={{ background: accentColor + "70" }}
+                // Subtle accent color ring on the image border
+                style={{ border: `4px solid ${accentColor}` }}
               />
             </div>
-          ) : data.personal_info?.image &&
+          ) : /* Case 2: Image exists and is a File object (newly uploaded) */
+          data.personal_info?.image &&
             typeof data.personal_info.image === "object" ? (
             <div className="mb-6">
               <img
+                // Create a temporary URL for the local file for preview
                 src={URL.createObjectURL(data.personal_info.image)}
                 alt="Profile"
                 className="w-32 h-32 object-cover rounded-full mx-auto"
+                style={{ border: `4px solid ${accentColor}` }}
               />
             </div>
           ) : null}
+          {/* End Image Display */}
         </div>
 
-        {/* Name + Title */}
+        {/* Top-Right Section: Name and Profession Header */}
         <div className="col-span-2 flex flex-col justify-center py-10 px-8">
           <h1 className="text-4xl font-bold text-zinc-700 tracking-widest">
             {data.personal_info?.full_name || "Your Name"}
@@ -47,32 +77,39 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
           </p>
         </div>
 
-        {/* Left Sidebar */}
+        {/* Left Sidebar Content (Contact, Education, Skills) */}
         <aside className="col-span-1 border-r border-zinc-400 p-6 pt-0">
-          {/* Contact */}
+          {/* Contact Details */}
           <section className="mb-8">
             <h2 className="text-sm font-semibold tracking-widest text-zinc-600 mb-3">
               CONTACT
             </h2>
             <div className="space-y-2 text-sm">
+              {/* Phone (Conditionally Rendered) */}
               {data.personal_info?.phone && (
                 <div className="flex items-center gap-2">
-                  <Phone size={14} style={{ color: accentColor }} />
+                  <Phone size={14} style={{ color: accentColor }} />{" "}
+                  {/* Accent Color Icon */}
                   <span>{data.personal_info.phone}</span>
                 </div>
               )}
+              {/* Email (Conditionally Rendered) */}
               {data.personal_info?.email && (
                 <div className="flex items-center gap-2">
-                  <Mail size={14} style={{ color: accentColor }} />
+                  <Mail size={14} style={{ color: accentColor }} />{" "}
+                  {/* Accent Color Icon */}
                   <span>{data.personal_info.email}</span>
                 </div>
               )}
+              {/* Location (Conditionally Rendered) */}
               {data.personal_info?.location && (
                 <div className="flex items-center gap-2">
-                  <MapPin size={14} style={{ color: accentColor }} />
+                  <MapPin size={14} style={{ color: accentColor }} />{" "}
+                  {/* Accent Color Icon */}
                   <span>{data.personal_info.location}</span>
                 </div>
               )}
+              {/* NOTE: LinkedIn and Website are missing from the contact section here */}
             </div>
           </section>
 
@@ -90,6 +127,7 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                     <p className="text-xs text-zinc-500">
                       {formatDate(edu.graduation_date)}
                     </p>
+                    {/* NOTE: GPA is not displayed in this template */}
                   </div>
                 ))}
               </div>
@@ -111,7 +149,7 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
           )}
         </aside>
 
-        {/* Right Content */}
+        {/* Right Main Content (Summary, Experience, Projects) */}
         <main className="col-span-2 p-8 pt-0">
           {/* Summary */}
           {data.professional_summary && (
@@ -145,6 +183,7 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                         {exp.position}
                       </h3>
                       <span className="text-xs text-zinc-500">
+                        {/* Date Range */}
                         {formatDate(exp.start_date)} -{" "}
                         {exp.is_current ? "Present" : formatDate(exp.end_date)}
                       </span>
@@ -154,6 +193,7 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                     </p>
                     {exp.description && (
                       <ul className="list-disc list-inside text-sm text-zinc-700 leading-relaxed space-y-1">
+                        {/* Splits the description by newline to render as a bulleted list */}
                         {exp.description.split("\n").map((line, i) => (
                           <li key={i}>{line}</li>
                         ))}
@@ -184,7 +224,8 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                       {project.type}
                     </p>
                     {project.description && (
-                      <ul className="list-disc list-inside text-sm text-zinc-700  space-y-1">
+                      <ul className="list-disc list-inside text-sm text-zinc-700 space-y-1">
+                        {/* Splits the description by newline to render as a bulleted list */}
                         {project.description.split("\n").map((line, i) => (
                           <li key={i}>{line}</li>
                         ))}

@@ -1,19 +1,31 @@
 import React, { useState } from "react";
 import { Check, Layout } from "lucide-react";
 
+/**
+ * @component TemplateSelector 🖼️
+ * @description A dropdown UI component that allows the user to select one of the
+ * available resume templates.
+ *
+ * @param {object} props
+ * @param {string} props.selectedTemplate - The ID of the currently active template (e.g., 'classic').
+ * @param {function(string): void} props.onChange - Callback function fired when a new template is selected.
+ */
 const TemplateSelector = ({ selectedTemplate, onChange }) => {
+  // State to control the visibility of the dropdown menu.
   const [isOpen, setIsOpen] = useState(false);
 
+  // --- Template Configuration Data ---
+  // Array defining all available templates, including their ID, display name, and preview text.
   const templates = [
     {
       id: "classic",
-      name: "classic",
+      name: "Classic", // Corrected capitalization for display
       preview:
         "A clean, traditional resume format with clear sections and professional typography",
     },
     {
       id: "modern",
-      name: "modern",
+      name: "Modern", // Corrected capitalization for display
       preview:
         "Sleek design with strategic use of color and modern font choices",
     },
@@ -29,8 +41,12 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
     },
   ];
 
+  // --- Rendered Component UI ---
+
   return (
+    // Outer container: Critical for relative positioning of the absolute dropdown.
     <div className="relative">
+      {/* Toggle Button: Opens/Closes the template selector */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1 text-sm text-blue-600 bg-gradient-to-br from-blue-50 to-blue-100 ring-blue-300 hover:ring transition-all px-3 py-2 rounded-lg"
@@ -38,21 +54,27 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
         <Layout size={14} /> <span className="max-sm:hidden">Template</span>
       </button>
 
+      {/* Dropdown Panel: Renders conditionally when isOpen is true */}
       {isOpen && (
         <div className="absolute top-full w-xs p-3 mt-2 space-y-3 z-10 bg-white rounded-md border border-gray-200 shadow-sm">
+          {/* Map over the templates array to render each selection card */}
           {templates.map((template) => (
             <div
               key={template.id}
               onClick={() => {
+                // 1. Call the parent handler to update the selected template ID.
                 onChange(template.id);
+                // 2. Close the dropdown after selection.
                 setIsOpen(false);
               }}
               className={`relative p-3 border rounded-md cursor-pointer transition-all ${
+                // Conditional styling based on whether this template is currently selected
                 selectedTemplate === template.id
                   ? "border-blue-400 bg-blue-100"
                   : "border-gray-300 hover:border-gray-400 hover:bg-gray-100"
               }`}
             >
+              {/* Selected Indicator (Checkmark) */}
               {selectedTemplate === template.id && (
                 <div className="absolute top-2 right-2">
                   <div className="size-5 bg-blue-400 rounded-full flex items-center justify-center">
@@ -61,6 +83,7 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
                 </div>
               )}
 
+              {/* Template Name and Preview Description */}
               <div className="space-y-1">
                 <h4 className="font-medium text-gray-800">{template.name}</h4>
                 <p className="mt-2 p-2 bg-blue-50 rounded text-xs text-gray-500 italic">
