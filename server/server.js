@@ -3,6 +3,7 @@ import cors from "cors";
 // This line loads variables from your .env file into process.env
 import "dotenv/config";
 import connectDB from "./configs/db.js";
+import userRouter from "./routes/userRoutes.js";
 
 const app = express();
 // PORT is read dynamically from process.env, defaulting to 3000
@@ -23,6 +24,7 @@ app.use(cors());
 app.get("/", (req, res) => {
   res.send(`<h1>Server is running on Port ${PORT}</h1>`);
 });
+app.use("/api/users", userRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on Port ${PORT}`);
