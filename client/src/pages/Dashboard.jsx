@@ -4,7 +4,7 @@ import {
   PencilIcon,
   PlusIcon,
   TrashIcon,
-  UploadCloud,
+  UploadCloudIcon,
   XIcon,
 } from "lucide-react";
 import { dummyResumeData } from "../assets/assets";
@@ -32,7 +32,7 @@ const Dashboard = () => {
     navigate(`/app/builder/resume123`);
   };
 
-  const uploadResune = async (event) => {
+  const uploadResume = async (event) => {
     event.preventDefault();
     setShowUploadResume(false);
     navigate(`/app/builder/resume123`);
@@ -48,7 +48,7 @@ const Dashboard = () => {
     );
 
     if (confirm) {
-      setAllResumes((prev) => prev.filter((resume) => resume._id != resumeId));
+      setAllResumes((prev) => prev.filter((resume) => resume._id !== resumeId));
     }
   };
 
@@ -78,7 +78,7 @@ const Dashboard = () => {
             onClick={() => setShowUploadResume(true)}
             className="w-full bg-white sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 text-slate-600 border border-dashed border-slate-300 group hover:border-purple-500 hover:shadow-lg transition-all duration-300 cursor-pointer"
           >
-            <UploadCloud className="size-11 transition-all duration-300 p-2.5 bg-gradient-to-br from-purple-300 to-purple-500 text-white rounded-full" />
+            <UploadCloudIcon className="size-11 transition-all duration-300 p-2.5 bg-gradient-to-br from-purple-300 to-purple-500 text-white rounded-full" />
             <p className="text-sm group-hover:text-purple-600 transition-all duration-300">
               Upload Existing
             </p>
@@ -124,9 +124,12 @@ const Dashboard = () => {
                   onClick={(e) => e.stopPropagation()}
                   className="absolute top-1 right-1 group-hover:flex items-center hidden"
                 >
-                  <TrashIcon onClick={()=>{
-                    deleteResume(resume._id)
-                  }} className="size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors" />
+                  <TrashIcon
+                    onClick={() => {
+                      deleteResume(resume._id);
+                    }}
+                    className="size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors"
+                  />
 
                   <PencilIcon
                     onClick={() => {
@@ -148,8 +151,8 @@ const Dashboard = () => {
             className="fixed inset-0 bg-black/70 backdrop-blur bg-opacity-50 z-10 flex items-center justify-center"
           >
             <div
-              className="relative bg-slate-50 border shadow-md rounded-lg w-full max-w-sm p-6"
               onClick={(e) => e.stopPropagation()}
+              className="relative bg-slate-50 border shadow-md rounded-lg w-full max-w-sm p-6"
             >
               <h2 className="text-xl font-bold mb-4">Create a Resume</h2>
 
@@ -179,7 +182,7 @@ const Dashboard = () => {
 
         {showUploadResume && (
           <form
-            onSubmit={uploadResune}
+            onSubmit={uploadResume}
             onClick={() => setShowUploadResume(false)}
             className="fixed inset-0 bg-black/70 backdrop-blur bg-opacity-50 z-10 flex items-center justify-center"
           >
@@ -209,7 +212,7 @@ const Dashboard = () => {
                       <p className="text-green-700">{resume.name}</p>
                     ) : (
                       <>
-                        <UploadCloud className="size-14 stroke-1" />
+                        <UploadCloudIcon className="size-14 stroke-1" />
                         <p>Upload Resume</p>
                       </>
                     )}
