@@ -21,7 +21,11 @@ app.use(express.json());
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.send(`<h1>Server is running on Port ${PORT}</h1>`);
+  res.send(`<div>
+    <h1>DEFAULT ROUTE</h1>  
+    <p>Resume Builder AI is Live🔥 Everything is running OK 👍🚀</p>
+    <p>Made By ❤️‍🔥 with Chinmay Kaitade</p>
+    </div>`);
 });
 
 app.use("/api/users", userRouter);
