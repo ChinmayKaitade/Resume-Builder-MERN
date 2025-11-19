@@ -1,22 +1,7 @@
 import { GraduationCap, Plus, Trash2 } from "lucide-react";
 import React from "react";
 
-/**
- * @component EducationForm 🎓
- * @description Form component for adding, editing, and removing multiple education entries.
- * It is a controlled component, relying entirely on the parent's state and onChange prop.
- *
- * @param {object} props
- * @param {Array<object>} props.data - The array of education objects (passed from parent state).
- * @param {function(Array<object>): void} props.onChange - Callback to update the parent state with the new array.
- */
 const EducationForm = ({ data, onChange }) => {
-  // --- Array Manipulation Handlers (Stateless Updates) ---
-
-  /**
-   * @function addEducation
-   * Creates a new, blank education object and appends it to the existing array.
-   */
   const addEducation = () => {
     // Define the structure of a new education entry with blank fields.
     const newEducation = {
@@ -31,11 +16,6 @@ const EducationForm = ({ data, onChange }) => {
     onChange([...data, newEducation]);
   };
 
-  /**
-   * @function removeEducation
-   * Filters out the education entry at the specified index from the array.
-   * @param {number} index - The index of the entry to remove.
-   */
   const removeEducation = (index) => {
     // Filter the array, excluding the item whose index matches the provided index.
     const updated = data.filter((_, i) => i !== index);
@@ -44,13 +24,6 @@ const EducationForm = ({ data, onChange }) => {
     onChange(updated);
   };
 
-  /**
-   * @function updateEducation
-   * Updates a single field within a specific education entry object.
-   * @param {number} index - The index of the education entry to modify.
-   * @param {string} field - The key of the field to update (e.g., 'institution').
-   * @param {string} value - The new value for that field.
-   */
   const updateEducation = (index, field, value) => {
     // 1. Create a shallow copy of the main array (immutability).
     const updated = [...data];
@@ -62,8 +35,6 @@ const EducationForm = ({ data, onChange }) => {
     // Pass the new array back to the parent state.
     onChange(updated);
   };
-
-  // --- Rendered Component UI ---
 
   return (
     <div className="space-y-6">

@@ -9,37 +9,16 @@ import {
 } from "lucide-react";
 import React from "react";
 
-/**
- * @component PersonalInfoForm 👤
- * @description Form component for editing the top-level personal and contact information.
- * It uses a declarative configuration array (`fields`) to render inputs dynamically.
- *
- * @param {object} props
- * @param {object} props.data - The personal information object (current state).
- * @param {function(object): void} props.onChange - Callback to update the parent state with new data.
- * @param {boolean} props.removeBackground - State indicating if the image background removal option is selected.
- * @param {function(boolean): void} props.setRemoveBackground - Setter for the background removal state.
- */
 const PersonalInfoForm = ({
   data,
   onChange,
   removeBackground,
   setRemoveBackground,
 }) => {
-  // --- Handlers ---
-
-  /**
-   * @function handleChange
-   * A unified handler to update any single field within the nested 'personal_info' object.
-   * @param {string} field - The key in the data object to update (e.g., 'full_name').
-   * @param {*} value - The new value for that field (can be string, file object, etc.).
-   */
   const handleChange = (field, value) => {
     // Immutably updates the data object and calls the parent's onChange prop.
     onChange({ ...data, [field]: value });
   };
-
-  // --- Input Field Configuration ---
 
   // Array of objects defining all input fields for dynamic rendering.
   const fields = [
@@ -88,8 +67,6 @@ const PersonalInfoForm = ({
       type: "url",
     },
   ];
-
-  // --- Rendered Component UI ---
 
   return (
     <div>

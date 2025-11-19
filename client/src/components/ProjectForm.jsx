@@ -1,41 +1,23 @@
 import { Plus, Trash2 } from "lucide-react";
 import React from "react";
 
-/**
- * @component ProjectForm 📂
- * @description Form component for managing multiple project entries in the resume.
- * It is a controlled component, manipulating an array of project objects
- * and reporting the changes back to the parent component via the `onChange` prop.
- *
- * @param {object} props
- * @param {Array<object>} props.data - The array of project objects (passed from parent state).
- * @param {function(Array<object>): void} props.onChange - Callback to update the parent state with the new array.
- */
-const ProjectForm = ({ data, onChange }) => {
-  // --- Array Manipulation Handlers (Immutability is Key) ---
-
-  /**
-   * @function addProject
-   * Creates a new, blank project object and appends it to the existing array.
-   */
+// 1. FIX: Set 'data' prop to an empty array '[]' by default
+// to prevent "Cannot read properties of undefined (reading 'map')" error.
+const ProjectForm = ({ data = [], onChange }) => {
   const addProject = () => {
-    // Define the structure of a new project entry.
+    // 2. ENHANCEMENT: Define the structure of a new project entry with new fields.
     const newProject = {
       name: "",
       type: "",
       description: "",
-      // SUGGESTION: Consider adding fields for 'live_link' (URL) and 'technologies' (array).
+      live_link: "", // New field for project URL
+      technologies: "", // New field for technologies (e.g., "React, TailwindCSS")
     };
 
     // Use the spread operator to create a new array instance for immutability.
     onChange([...data, newProject]);
   };
 
-  /**
-   * @function removeProject
-   * Filters out the project entry at the specified index from the array.
-   * @param {number} index - The index of the entry to remove.
-   */
   const removeProject = (index) => {
     // Filter the array, keeping only items whose index does not match.
     const updated = data.filter((_, i) => i !== index);
@@ -44,13 +26,6 @@ const ProjectForm = ({ data, onChange }) => {
     onChange(updated);
   };
 
-  /**
-   * @function updateProject
-   * Updates a single field within a specific project entry object.
-   * @param {number} index - The index of the project entry to modify.
-   * @param {string} field - The key of the field to update (e.g., 'name').
-   * @param {string} value - The new value for that field.
-   */
   const updateProject = (index, field, value) => {
     // 1. Create a shallow copy of the main array.
     const updated = [...data];
@@ -61,8 +36,6 @@ const ProjectForm = ({ data, onChange }) => {
     // Pass the new array back to the parent state.
     onChange(updated);
   };
-
-  // --- Rendered Component UI ---
 
   return (
     <div>
@@ -87,59 +60,85 @@ const ProjectForm = ({ data, onChange }) => {
 
       {/* Project List Container */}
       <div className="space-y-4 mt-6">
-        {/* Map through all project entries to render individual form blocks */}
-        {data.map((project, index) => (
-          <div
-            key={index} // Key is used here for mapping stability.
-            className="p-4 border border-gray-200 rounded-lg space-y-3"
-          >
-            <div className="flex justify-between items-start">
-              {/* Title and Remove Button */}
-              <h4>Project #{index + 1}</h4>
-              <button
-                onClick={() => removeProject(index)}
-                className="text-red-500 hover:text-red-700 transition-colors"
-              >
-                <Trash2 className="size-4" />
-              </button>
-            </div>
-
-            {/* Input Fields for a Single Project */}
-            <div className="grid gap-3">
-              {/* Project Name */}
-              <input
-                value={project.name || ""}
-                onChange={(e) => updateProject(index, "name", e.target.value)}
-                type="text"
-                placeholder="Project Name"
-                className="px-3 py-2 text-sm rounded-lg"
-              />
-
-              {/* Project Type/Role */}
-              <input
-                value={project.type || ""}
-                onChange={(e) => updateProject(index, "type", e.target.value)}
-                type="text"
-                placeholder="Project Type"
-                className="px-3 py-2 text-sm rounded-lg"
-              />
-
-              {/* Description Textarea */}
-              <textarea
-                rows={4}
-                value={project.description || ""}
-                onChange={(e) =>
-                  updateProject(index, "description", e.target.value)
-                }
-                placeholder="Describe your project..."
-                className="w-full px-3 py-2 text-sm rounded-lg resize-none"
-              />
-            </div>
+        {/* 3. ENHANCEMENT: Show a placeholder if no projects are added. */}
+        {data.length === 0 ? (
+          <div className="text-center p-8 border-2 border-dashed border-gray-300 rounded-lg text-gray-500">
+            Click "Add Project" to start listing your portfolio projects.
           </div>
-        ))}
+        ) : (
+          /* Map through all project entries to render individual form blocks */
+          data.map((project, index) => (
+            <div
+              key={index} // Key is used here for mapping stability.
+              className="p-4 border border-gray-200 rounded-lg space-y-3"
+            >
+              <div className="flex justify-between items-start">
+                {/* Title and Remove Button */}
+                <h4>Project #{index + 1}</h4>
+                <button
+                  onClick={() => removeProject(index)}
+                  className="text-red-500 hover:text-red-700 transition-colors"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
 
-        {/* SUGGESTION: Implement conditional rendering here to show a placeholder
-            if data.length is 0, similar to the Education and Experience forms. */}
+              {/* Input Fields for a Single Project */}
+              <div className="grid gap-3">
+                {/* Project Name */}
+                <input
+                  value={project.name || ""}
+                  onChange={(e) => updateProject(index, "name", e.target.value)}
+                  type="text"
+                  placeholder="Project Name"
+                  className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+
+                {/* Project Type/Role */}
+                <input
+                  value={project.type || ""}
+                  onChange={(e) => updateProject(index, "type", e.target.value)}
+                  type="text"
+                  placeholder="Role / Project Type (e.g., Lead Developer)"
+                  className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+
+                {/* Live Link (New Field) */}
+                <input
+                  value={project.live_link || ""}
+                  onChange={(e) =>
+                    updateProject(index, "live_link", e.target.value)
+                  }
+                  type="url"
+                  placeholder="Live Link / GitHub URL"
+                  className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+
+                {/* Technologies Used (New Field) */}
+                <input
+                  value={project.technologies || ""}
+                  onChange={(e) =>
+                    updateProject(index, "technologies", e.target.value)
+                  }
+                  type="text"
+                  placeholder="Technologies Used (e.g., React, Node.js, AWS)"
+                  className="px-3 py-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+
+                {/* Description Textarea */}
+                <textarea
+                  rows={4}
+                  value={project.description || ""}
+                  onChange={(e) =>
+                    updateProject(index, "description", e.target.value)
+                  }
+                  placeholder="Describe your project, your contributions, and the outcomes..."
+                  className="w-full px-3 py-2 text-sm rounded-lg resize-none border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

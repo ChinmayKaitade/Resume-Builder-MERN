@@ -1,10 +1,5 @@
 import React from "react";
 
-/**
- * @component Footer ⬇️
- * @description The standard application footer for the landing page. It includes
- * multi-column navigation links, social media icons, and dynamic copyright information.
- */
 const Footer = () => {
   // Get the current year dynamically for the copyright notice.
   const currentYear = new Date().getFullYear();
@@ -15,7 +10,7 @@ const Footer = () => {
         {/* Main Content Wrapper: Contains Logo and all Navigation Columns */}
         <div className="flex flex-wrap items-start gap-10 md:gap-[60px] xl:gap-[140px]">
           {/* Logo/Branding Link */}
-          <a href="https://prebuiltui.com">
+          <a href="https://github.com/ChinmayKaitade">
             <img
               src="./logo.svg"
               alt="Resume Builder Logo" // Good practice: descriptive alt text
@@ -142,7 +137,7 @@ const Footer = () => {
 
             {/* LinkedIn Link */}
             <a
-              href="https://www.linkedin.com/company/chinmay-sharad-kaitade"
+              href="https://linkedin.com/in/chinmay-sharad-kaitade"
               target="_blank"
               rel="noreferrer"
             >
@@ -215,13 +210,14 @@ const Footer = () => {
 
           {/* Copyright Notice: Uses the dynamically calculated current year */}
           <p className="mt-3 text-center">
-            © **{currentYear}**{" "}
-            <a href="https://prebuiltui.com">Resume Builder AI</a>
+            © {currentYear}{" "}
+            <a href="https://github.com/ChinmayKaitade" target="_blank">
+              Made By ❤️‍🔥 with Chinmay Kaitade
+            </a>
           </p>
         </div>
       </footer>
 
-      {/* Global Font Import (Should be centralized in a global CSS file) */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
     

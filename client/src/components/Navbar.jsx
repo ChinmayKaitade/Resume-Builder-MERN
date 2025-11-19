@@ -1,45 +1,20 @@
 import React from "react";
-// Import routing components: Link for declarative navigation, useNavigate for imperative navigation.
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { logout } from "../app/features/authSlice";
 
-/**
- * @component Navbar 🧭
- * @description The main navigation bar component, typically rendered inside the Layout.
- * It provides application branding, a user greeting, and a logout mechanism.
- */
 const Navbar = () => {
-  // --- Simulated User State ---
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
-  // NOTE: This user object would typically be fetched from a global state management
-  // system (e.g., Redux, Context API) or retrieved from a hook provided by an
-  // authentication service (e.g., useAuth()).
-  const user = { name: "John Doe" };
-
-  // --- Utility Hooks ---
-
-  // Hook instance used for programmatic routing (e.g., redirecting after logout).
   const navigate = useNavigate();
 
-  // --- Handlers ---
-
-  /**
-   * @function logoutUser
-   * Handles the user logout process.
-   * NOTE: In a production app, this function must:
-   * 1. Call the logout API endpoint.
-   * 2. Clear local storage/cookies (remove authentication token/session ID).
-   * 3. Clear global user state.
-   * 4. Redirect the user to the home/login page.
-   */
   const logoutUser = () => {
-    // Current implementation only handles the redirect.
     navigate("/");
+    dispatch(logout());
   };
 
-  // --- Rendered Component UI ---
-
   return (
-    // Outer container with a drop shadow for visual separation.
     <div className="shadow bg-white">
       {/* Navigation container: Ensures max width and centers content. */}
       <nav className="flex items-center justify-between max-w-7xl mx-auto px-4 py-3.5 text-slate-800 transition-all">

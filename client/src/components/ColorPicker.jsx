@@ -1,13 +1,6 @@
 import { Check, Palette } from "lucide-react";
 import React, { useState } from "react";
 
-/**
- * @component ColorPicker 🎨
- * @description A dropdown UI component for selecting a resume's accent color from a predefined palette.
- * @param {object} props
- * @param {string} props.selectedColor - The currently selected color's hexadecimal value (e.g., "#3b82f6").
- * @param {function(string): void} props.onChange - Callback function fired when a new color is selected.
- */
 const ColorPicker = ({ selectedColor, onChange }) => {
   // Predefined palette of colors available for selection.
   const colors = [
@@ -25,8 +18,6 @@ const ColorPicker = ({ selectedColor, onChange }) => {
 
   // State to control the visibility of the color palette dropdown.
   const [isOpen, setIsOpen] = useState(false);
-
-  // --- Rendered Component UI ---
 
   return (
     // Outer container wrapper, critical for positioning the absolute dropdown.

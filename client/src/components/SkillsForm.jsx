@@ -1,24 +1,10 @@
 import React, { useState } from "react";
 import { Plus, Sparkles, X } from "lucide-react";
 
-/**
- * @component SkillsForm ✨
- * @description Form component for adding and managing a list of skills using a tag-like interface.
- *
- * @param {object} props
- * @param {Array<string>} props.data - The array of skill strings (passed from parent state).
- * @param {function(Array<string>): void} props.onChange - Callback to update the parent state with the new array.
- */
 const SkillsForm = ({ data, onChange }) => {
   // State to hold the text currently being typed by the user in the input field.
   const [newSkill, setNewSkill] = useState("");
 
-  // --- Handlers for Array Manipulation ---
-
-  /**
-   * @function addSkill
-   * Adds the currently typed skill to the data array, ensuring it's not empty or a duplicate.
-   */
   const addSkill = () => {
     // 1. Basic Validation: Check if the input is non-empty after trimming whitespace.
     // 2. Duplicate Check: Ensure the skill doesn't already exist in the array.
@@ -31,29 +17,17 @@ const SkillsForm = ({ data, onChange }) => {
     }
   };
 
-  /**
-   * @function removeSkill
-   * Removes a skill from the data array based on its index.
-   * @param {number} indexToRemove - The index of the skill to remove.
-   */
   const removeSkill = (indexToRemove) => {
     // Filter the array immutably, keeping only elements whose index does not match indexToRemove.
     onChange(data.filter((_, index) => index !== indexToRemove));
   };
 
-  /**
-   * @function handleKeyPress
-   * Allows the skill to be added when the 'Enter' key is pressed, enhancing keyboard accessibility.
-   * @param {Event} e - The keyboard event.
-   */
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       e.preventDefault(); // Prevent default form submission or newline behavior.
       addSkill();
     }
   };
-
-  // --- Rendered Component UI ---
 
   return (
     <div className="space-y-4">

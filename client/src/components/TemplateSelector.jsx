@@ -1,21 +1,10 @@
 import React, { useState } from "react";
 import { Check, Layout } from "lucide-react";
 
-/**
- * @component TemplateSelector 🖼️
- * @description A dropdown UI component that allows the user to select one of the
- * available resume templates.
- *
- * @param {object} props
- * @param {string} props.selectedTemplate - The ID of the currently active template (e.g., 'classic').
- * @param {function(string): void} props.onChange - Callback function fired when a new template is selected.
- */
 const TemplateSelector = ({ selectedTemplate, onChange }) => {
   // State to control the visibility of the dropdown menu.
   const [isOpen, setIsOpen] = useState(false);
 
-  // --- Template Configuration Data ---
-  // Array defining all available templates, including their ID, display name, and preview text.
   const templates = [
     {
       id: "classic",
@@ -40,8 +29,6 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
       preview: "Ultra-clean design that puts your content front and center",
     },
   ];
-
-  // --- Rendered Component UI ---
 
   return (
     // Outer container: Critical for relative positioning of the absolute dropdown.

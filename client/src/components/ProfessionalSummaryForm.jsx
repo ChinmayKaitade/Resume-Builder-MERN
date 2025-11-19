@@ -1,21 +1,38 @@
-import { Sparkles } from "lucide-react";
-import React from "react";
+import { Loader2, Sparkles } from "lucide-react";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import api from "../configs/api";
+import toast from "react-hot-toast";
 
-/**
- * @component ProfessionalSummaryForm 📝
- * @description Form component dedicated to editing the user's professional summary (or "About Me" section).
- * It uses a single textarea field to capture a block of text.
- *
- * @param {object} props
- * @param {string} props.data - The current professional summary text (passed from parent state).
- * @param {function(string): void} props.onChange - Callback to update the parent state with the new summary text.
- * @param {function} props.setResumeData - (Optional/Advanced) Setter function for the entire parent resume state,
- * likely intended for use by complex utilities like the AI enhancer.
- */
 const ProfessionalSummaryForm = ({ data, onChange, setResumeData }) => {
-  // NOTE: If the AI Enhance feature is implemented, its handler function would
-  // typically go here. It would likely call an AI API, receive the enhanced text,
-  // and then update the state using onChange(newText) or setResumeData.
+  const { token } = useSelector((state) => state.auth);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const generateSummary = async () => {
+    try {
+      setIsGenerating(true);
+      const prompt = `enhance my professional summary "${data}"`;
+
+      const response = await api.post(
+        "/api/ai/enhance-pro-sum",
+        { userContent: prompt },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      setResumeData((prev) => ({
+        ...prev,
+        professional_summary: response.data.enhancedContent,
+      }));
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -33,25 +50,30 @@ const ProfessionalSummaryForm = ({ data, onChange, setResumeData }) => {
         </div>
 
         {/* AI Enhance Button (Placeholder) */}
-        <button className="flex items-center gap-2 px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors disabled:opacity-50">
-          <Sparkles className="size-4" />
-          AI Enhance
+        <button
+          disabled={isGenerating}
+          onClick={generateSummary}
+          className="flex items-center gap-2 px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors disabled:opacity-50"
+        >
+          {isGenerating ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Sparkles className="size-4" />
+          )}
+
+          {isGenerating ? "Enhancing..." : "AI Enhance"}
         </button>
       </div>
 
       <div className="mt-6">
-        {/* Textarea Input Field */}
         <textarea
-          // Use the `data` prop as the value for the controlled component.
           value={data || ""}
-          // On change, pass the new text value directly back to the parent component.
           onChange={(e) => onChange(e.target.value)}
           rows={7}
           className="w-full p-3 px-4 mt-2 border text-sm border-gray-300 rounded-lg focus:ring focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors resize-none"
           placeholder="Write a compelling professional summary that highlights your key strengths and career objectives..."
         />
 
-        {/* UX Tip */}
         <p className="text-xs text-gray-500 max-w-4/5 mx-auto text-center">
           Tip: Keep it concise (3-4 sentences) and focus on your most relevant
           achievements and skills.

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 // Import page components for routing.
 import Home from "./pages/Home";
 import Layout from "./pages/Layout";
@@ -8,45 +8,60 @@ import Preview from "./pages/Preview";
 import Login from "./pages/Login";
 // Import essential routing components from React Router v6.
 import { Route, Routes } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import api from "./configs/api";
+import { login, setLoading } from "./app/features/authSlice";
+import { Toaster } from "react-hot-toast";
+import NotFoundPage from "./pages/NotFoundPage";
 
-/**
- * @fileoverview Main application component defining the top-level routing structure.
- * This component uses React Router v6 to map URLs to specific page components,
- * including nested routes for the authenticated application section.
- */
 const App = () => {
+  const dispatch = useDispatch();
+
+  const getUserData = async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+      if (token) {
+        const { data } = await api.get("/api/users/data", {
+          headers: {
+            Authorization: token,
+          },
+        });
+
+        if (data.user) {
+          dispatch(login({ token, user: data.user }));
+        }
+
+        dispatch(setLoading(false));
+      } else {
+        dispatch(setLoading(false));
+      }
+    } catch (error) {
+      dispatch(setLoading(false));
+      console.log(error.message);
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
   return (
     <>
-      {/* Routes container component for managing the application's URL paths */}
+      <Toaster />
       <Routes>
-        {/* --- Public/Marketing Routes --- */}
-        {/* Route for the main marketing or landing page. */}
         <Route path="/" element={<Home />} />
 
-        {/* --- Authenticated Application Routes (Nested) --- */}
-        {/* The 'app' path uses the Layout component as a wrapper, which typically
-            includes persistent UI elements like headers and navigation.
-            The Layout component must contain an <Outlet /> for rendering nested routes. */}
+        {/* nested routes */}
         <Route path="app" element={<Layout />}>
-          {/* Index Route: Renders the main Dashboard when the path is exactly '/app'. */}
           <Route index element={<Dashboard />} />
-          {/* Builder Route: Route for the resume creation/editing tool.
-              It uses a dynamic URL parameter :resumeId to load a specific resume. */}
           <Route path="builder/:resumeId" element={<ResumeBuilder />} />
-          {/* View Route: Route for viewing the final resume preview.
-              It also uses the dynamic URL parameter :resumeId. */}
-          <Route path="view/:resumeId" element={<Preview />} />
         </Route>
 
-        {/* --- Authentication Routes --- */}
-        {/* Route for user login. */}
+        <Route path="view/:resumeId" element={<Preview />} />
         <Route path="login" element={<Login />} />
 
-        {/*
-          SUGGESTION: For better user experience, it is highly recommended to add a
-          catch-all route at the end to handle 404 (Not Found) errors.
-          Example: <Route path="*" element={<NotFoundPage />} />
-        */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );

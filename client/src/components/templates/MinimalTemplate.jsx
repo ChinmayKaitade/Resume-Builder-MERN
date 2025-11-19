@@ -1,24 +1,6 @@
 import React from "react";
 
-/**
- * @component MinimalTemplate 📏
- * @description A modern, single-column resume template focusing on clean typography
- * and minimal ornamentation. It uses font weight and size variations for hierarchy
- * rather than lines or colors, using the accent color only for major section titles.
- *
- * @param {object} props
- * @param {object} props.data - The complete resume data object.
- * @param {string} props.accentColor - Hex code for the primary color theme (used for headings).
- */
 const MinimalTemplate = ({ data, accentColor }) => {
-  // --- Utility Function ---
-
-  /**
-   * @function formatDate
-   * Converts a YYYY-MM date string to a short display format (e.g., "Jan 2024").
-   * @param {string} dateStr - The date string in "YYYY-MM" format.
-   * @returns {string} Formatted date string or an empty string if null.
-   */
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
     const [year, month] = dateStr.split("-");
@@ -29,7 +11,6 @@ const MinimalTemplate = ({ data, accentColor }) => {
     });
   };
 
-  // --- Rendered Template UI ---
 
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white text-gray-900 font-light">

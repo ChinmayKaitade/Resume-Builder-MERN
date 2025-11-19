@@ -1,14 +1,12 @@
 import { Lock, Mail, User2Icon } from "lucide-react";
 import React from "react";
+import api from "../configs/api";
+import { useDispatch } from "react-redux";
+import { login } from "../app/features/authSlice";
+import toast from "react-hot-toast";
 
-/**
- * @component Login 🔑
- * @description Renders a combined Login/Sign up form. It manages the form state,
- * handles user input, and uses the URL query parameter 'state' to determine the
- * initial view (login or register).
- */
 const Login = () => {
-  // --- Initialization & State Management ---
+  const dispatch = useDispatch();
 
   // Retrieves query parameters from the URL (e.g., ?state=register).
   const query = new URLSearchParams(window.location.search);
@@ -26,37 +24,23 @@ const Login = () => {
     password: "",
   });
 
-  // --- Form Handlers ---
-
-  /**
-   * @async
-   * @function handleSubmit
-   * Handles the form submission (Login or Sign up, based on the current 'state').
-   * NOTE: This is where the API call (e.g., /auth/login or /auth/register) would be implemented.
-   * @param {Event} e - The form submission event.
-   */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Implementation details go here:
-    // 1. Validate formData.
-    // 2. Determine endpoint based on 'state'.
-    // 3. Make API call (fetch or axios).
-    // 4. Handle success (e.g., token storage, navigation).
-    // 5. Handle errors (e.g., display error message).
+    try {
+      const { data } = await api.post(`/api/users/${state}`, formData);
+      dispatch(login(data));
+      localStorage.setItem("token", data.token);
+      toast.success(data.message);
+    } catch (error) {
+      toast(error?.response?.data?.message || error.message);
+    }
   };
 
-  /**
-   * @function handleChange
-   * Generic handler for all input fields. Updates the corresponding key in the formData state.
-   * @param {Event} e - The change event from the input field.
-   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     // Uses the input's 'name' attribute dynamically to update the state key.
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
-  // --- Rendered Component UI ---
 
   return (
     // Centering container for the form

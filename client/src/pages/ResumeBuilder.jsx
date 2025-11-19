@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
-// Import necessary hooks for route parameters and linking/navigation.
 import { Link, useParams } from "react-router-dom";
-// Local dummy data source (placeholder for actual API/DB integration).
-import { dummyResumeData } from "../assets/assets";
+
 // Import icons for section navigation and utility buttons from Lucide.
 import {
-  ArrowLeft,
   ArrowLeftIcon,
   Briefcase,
   ChevronLeft,
   ChevronRight,
   DownloadIcon,
   EyeIcon,
-  EyeOff,
   EyeOffIcon,
   FileText,
   Folder,
@@ -32,63 +28,48 @@ import ExperienceForm from "../components/ExperienceForm";
 import EducationForm from "../components/EducationForm";
 import ProjectForm from "../components/ProjectForm";
 import SkillsForm from "../components/SkillsForm";
+import { useSelector } from "react-redux";
+import api from "../configs/api";
+import toast from "react-hot-toast";
 
-/**
- * @component ResumeBuilder 🛠️
- * @description The main interface for editing a user's resume. It manages the complete
- * resume data state, controls step-by-step form navigation, and updates the
- * live preview in real-time.
- */
 const ResumeBuilder = () => {
-  // Get the unique identifier of the resume being edited from the URL.
   const { resumeId } = useParams();
+  const { token } = useSelector((state) => state.auth);
 
-  // --- Core Resume State Management ---
-
-  // Comprehensive state object holding ALL resume data, initialized with defaults.
-  // This state object is passed down to all form and preview components.
   const [resumeData, setResumeData] = useState({
     _id: "",
     title: "",
-    personal_info: {}, // Object for contact details, etc.
-    professional_summary: "", // String or rich text for the summary.
-    experience: [], // Array of job experience objects.
-    education: [], // Array of education history objects.
-    project: [], // Array of project objects.
-    skills: [], // Array of skill objects.
-    template: "classic", // Template style identifier.
-    accent_color: "#3b82f6", // Primary color theme (Tailwind blue-500 default).
-    public: false, // Visibility status (private or public shareable link).
+    personal_info: {},
+    professional_summary: "",
+    experience: [],
+    education: [],
+    project: [],
+    skills: [],
+    template: "classic",
+    accent_color: "#3b82f6",
+    public: false,
   });
 
-  // --- Data Loading ---
-
-  /**
-   * @async
-   * @function loadExistingResume
-   * Fetches the full resume data based on the URL's resumeId and updates the state.
-   */
   const loadExistingResume = async () => {
-    // NOTE: Replace this with an API call (e.g., GET /api/resumes/{resumeId}).
-    const resume = dummyResumeData.find((resume) => resume._id === resumeId);
+    try {
+      const { data } = await api.get("/api/resumes/get/" + resumeId, {
+        headers: {
+          Authorization: token,
+        },
+      });
 
-    if (resume) {
-      // Set the fetched data to the main state.
-      setResumeData(resume);
-      // Update the browser tab title for better UX.
-      document.title = resume.title;
+      if (data.resume) {
+        setResumeData(data.resume);
+        document.title = data.resume.title;
+      }
+    } catch (error) {
+      console.log(error.message);
     }
-    // SUGGESTION: If resume is null, handle the 'Not Found' case here (e.g., navigate to 404).
   };
 
-  // --- UI/Navigation State ---
-
-  // Controls which step (form section) is currently visible in the left panel.
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
-  // State for a specific UI feature, likely related to photo manipulation (e.g., removing photo background).
   const [removeBackground, setRemoveBackground] = useState(false);
 
-  // Array defining the structure and order of the builder steps/sections.
   const sections = [
     { id: "personal", name: "Personal Info", icon: User },
     { id: "summary", name: "Summary", icon: FileText },
@@ -98,66 +79,99 @@ const ResumeBuilder = () => {
     { id: "skills", name: "Skills", icon: Sparkles },
   ];
 
-  // Helper variable to easily reference the currently selected section object.
   const activeSection = sections[activeSectionIndex];
 
-  // --- Side Effects (useEffect) ---
-
-  /**
-   * useEffect Hook: Runs once on component mount to load the resume data.
-   */
   useEffect(() => {
     loadExistingResume();
   }, []);
 
-  // SUGGESTION: Consider adding another useEffect to automatically save resumeData
-  // whenever it changes (debounced save functionality).
-
-  // --- Utility Handlers ---
-
-  /**
-   * @function changeResumeVisibility
-   * Toggles the 'public' status of the resume.
-   * This should trigger a database update to change the resume's shareability.
-   */
   const changeResumeVisibility = async () => {
-    setResumeData({ ...resumeData, public: !resumeData.public });
-    // NOTE: Add API call here to persist the visibility change to the backend.
+    try {
+      const formData = new FormData();
+      formData.append("resumeId", resumeId);
+      formData.append(
+        "resumeData",
+        JSON.stringify({ public: !resumeData.public })
+      );
+
+      const { data } = await api.put("/api/resumes/update", formData, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setResumeData({ ...resumeData, public: !resumeData.public });
+      toast.success(data.message);
+    } catch (error) {
+      console.error("Error in Saving resume: ", error);
+    }
   };
 
-  /**
-   * @function handleShare
-   * Generates the public URL and attempts to use the native Web Share API.
-   * Falls back to an alert if native share is not supported.
-   */
+  // const handleShare = () => {
+  //   const frontendUrl = window.location.href.split("/app/")[0];
+  //   const resumeUrl = frontendUrl + "/view/" + resumeId;
+
+  //   if (navigator.share) {
+  //     navigator.share({ url: resumeUrl, text: "My Resume" });
+  //   } else {
+  //     alert("Share not supported on this browser.");
+  //   }
+  // };
+
   const handleShare = () => {
-    // Constructs the full view URL using the base domain and the current resume ID.
     const frontendUrl = window.location.href.split("/app/")[0];
     const resumeUrl = frontendUrl + "/view/" + resumeId;
 
-    // Use the native Web Share API if available (better mobile integration).
     if (navigator.share) {
-      navigator.share({ url: resumeUrl, text: "My Resume" });
+      navigator
+        .share({
+          url: resumeUrl,
+          text: "My Resume",
+        })
+        .then(() => console.log("Successful share"))
+        .catch((error) => {
+          console.error("Error sharing:", error);
+          toast.error(
+            "Share failed. Check console for details or ensure you are on HTTPS."
+          );
+        });
     } else {
-      // SUGGESTION: Replace alert() with a custom modal or toast notification
-      // that displays the URL for manual copying.
       alert("Share not supported on this browser.");
     }
   };
 
-  /**
-   * @function downloadResume
-   * Triggers the browser's print dialog, which is commonly used to generate a PDF.
-   */
   const downloadResume = () => {
     window.print();
   };
 
-  // --- Rendered Component UI ---
+  const saveResume = async () => {
+    try {
+      let updatedResumeData = structuredClone(resumeData);
+
+      if (typeof resumeData.personal_info.image === "object") {
+        delete updatedResumeData.personal_info.image;
+      }
+
+      const formData = new FormData();
+      formData.append("resumeId", resumeId);
+      formData.append("resumeData", JSON.stringify(updatedResumeData));
+      removeBackground && formData.append("removeBackground", "yes");
+      typeof resumeData.personal_info.image === "object" &&
+        formData.append("image", resumeData.personal_info.image);
+
+      const { data } = await api.put("/api/resumes/update", formData, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      setResumeData(data.resume);
+      toast.success(data.message);
+    } catch (error) {
+      console.error("Error in Saving resume: ", error);
+    }
+  };
 
   return (
     <div>
-      {/* Back to Dashboard Link */}
       <div className="max-w-7xl mx-auto px-4 py-6">
         <Link
           to={"/app"}
@@ -168,7 +182,6 @@ const ResumeBuilder = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 pb-8">
-        {/* Main Grid Layout: 5 columns for form, 7 columns for preview on large screens */}
         <div className="grid lg:grid-cols-12 gap-8">
           {/* Left Panel - Form Editor */}
           <div className="relative lg:col-span-5 rounded-lg overflow-hidden">
@@ -336,7 +349,12 @@ const ResumeBuilder = () => {
               </div>
 
               {/* Save Button */}
-              <button className="bg-gradient-to-br from-green-100 to-green-200 ring-green-300 text-gray-600 ring hover:ring-green-400 transition-all rounded-md px-6 py-2 mt-6 text-sm">
+              <button
+                onClick={() => {
+                  toast.promise(saveResume, { loading: "Saving..." });
+                }}
+                className="bg-gradient-to-br from-green-100 to-green-200 ring-green-300 text-gray-600 ring hover:ring-green-400 transition-all rounded-md px-6 py-2 mt-6 text-sm"
+              >
                 Save Changes
               </button>
             </div>
@@ -363,9 +381,9 @@ const ResumeBuilder = () => {
                   className="flex items-center p-2 px-4 gap-2 text-xs bg-gradient-to-br from-purple-100 to-purple-200 text-purple-600 ring-purple-300 rounded-l-2xl hover:ring transition-colors"
                 >
                   {resumeData.public ? (
-                    <EyeIcon className="size-4" /> // Eye open if public
+                    <EyeIcon className="size-4" />
                   ) : (
-                    <EyeOffIcon className="size-4" /> // Eye closed if private
+                    <EyeOffIcon className="size-4" />
                   )}
 
                   {resumeData.public ? "Public" : "Private"}
@@ -375,7 +393,7 @@ const ResumeBuilder = () => {
                 <button
                   onClick={downloadResume}
                   className="flex items-center gap-2 px-6 py-2 text-xs
-                  bg-gradient-to-br from-green-100 to-green-200 text-green-600 rounded-lg ring-red-300 hover:ring transition-colors"
+                  bg-gradient-to-br from-green-100 to-green-200 text-green-600 rounded-lg ring-green-300 hover:ring transition-colors"
                 >
                   <DownloadIcon className="size-4" /> Download
                 </button>

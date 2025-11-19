@@ -1,31 +1,10 @@
 import React from "react";
-// Import all available resume templates.
 import ModernTemplate from "./templates/ModernTemplate";
 import MinimalTemplate from "./templates/MinimalTemplate";
 import MinimalImageTemplate from "./templates/MinimalImageTemplate";
 import ClassicTemplate from "./templates/ClassicTemplate";
 
-/**
- * @component ResumePreview 🖼️
- * @description The central component responsible for selecting and rendering the
- * correct resume template based on user choice (`template` prop). It ensures the
- * resume is correctly formatted for display and professional PDF export (print media).
- *
- * @param {object} props
- * @param {object} props.data - The complete resume data object.
- * @param {string} props.template - Identifier for the selected template (e.g., 'modern', 'classic').
- * @param {string} props.accentColor - Hex code for the user-defined accent color.
- * @param {string} [props.classes=''] - Optional Tailwind classes to apply to the preview container.
- */
 const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
-  // --- Template Rendering Logic ---
-
-  /**
-   * @function renderTemplate
-   * Uses a switch statement to dynamically choose the correct template component
-   * based on the `template` prop value.
-   * @returns {React.Component} The selected template component, populated with props.
-   */
   const renderTemplate = () => {
     switch (template) {
       case "modern":
@@ -35,13 +14,10 @@ const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
       case "minimal-image":
         return <MinimalImageTemplate data={data} accentColor={accentColor} />;
 
-      // The default case handles 'classic' (if template is 'classic') or any undefined/unmatched value.
       default:
         return <ClassicTemplate data={data} accentColor={accentColor} />;
     }
   };
-
-  // --- Rendered Component UI ---
 
   return (
     <div className="w-full bg-gray-100">

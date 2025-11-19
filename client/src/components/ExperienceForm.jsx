@@ -1,23 +1,13 @@
-import { Briefcase, Plus, Sparkles, Trash2 } from "lucide-react";
-import React from "react";
+import { Briefcase, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import api from "../configs/api";
+import toast from "react-hot-toast";
 
-/**
- * @component ExperienceForm 💼
- * @description Form component for managing multiple professional work experience entries.
- * It operates as a controlled component, manipulating an array of experience objects
- * and reporting the changes back to the parent component via the `onChange` prop.
- *
- * @param {object} props
- * @param {Array<object>} props.data - The array of experience objects (passed from parent state).
- * @param {function(Array<object>): void} props.onChange - Callback to update the parent state with the new array.
- */
 const ExperienceForm = ({ data, onChange }) => {
-  // --- Array Manipulation Handlers (Immutability is Key) ---
+  const { token } = useSelector((state) => state.auth);
+  const [generatingIndex, setGeneratingIndex] = useState(-1);
 
-  /**
-   * @function addExperience
-   * Creates a new, blank experience object and appends it to the existing array.
-   */
   const addExperience = () => {
     // Define the structure of a new experience entry.
     const newExperience = {
@@ -26,45 +16,75 @@ const ExperienceForm = ({ data, onChange }) => {
       start_date: "",
       end_date: "",
       description: "",
-      is_current: false, // Ensure this defaults to boolean false
+      is_current: false,
     };
-
-    // Use the spread operator to create a new array instance for immutability.
     onChange([...data, newExperience]);
   };
 
-  /**
-   * @function removeExperience
-   * Filters out the experience entry at the specified index from the array.
-   * @param {number} index - The index of the entry to remove.
-   */
   const removeExperience = (index) => {
     // Filter the array, keeping only items whose index does not match.
     const updated = data.filter((_, i) => i !== index);
-
-    // Pass the new filtered array back to the parent state.
     onChange(updated);
   };
 
-  /**
-   * @function updateExperience
-   * Updates a single field within a specific experience entry object.
-   * @param {number} index - The index of the experience entry to modify.
-   * @param {string} field - The key of the field to update (e.g., 'company', 'is_current').
-   * @param {*} value - The new value for that field (can be string or boolean).
-   */
   const updateExperience = (index, field, value) => {
     // 1. Create a shallow copy of the main array.
     const updated = [...data];
 
     // 2. Create a shallow copy of the specific object and update the field.
-    updated[index] = { ...updated[index], [field]: value };
+    // Handles clearing end_date if 'is_current' is checked
+    if (field === "is_current" && value === true) {
+      updated[index] = { ...updated[index], [field]: value, end_date: null };
+    } else {
+      updated[index] = { ...updated[index], [field]: value };
+    }
 
     // Pass the new array back to the parent state.
     onChange(updated);
   };
 
-  // --- Rendered Component UI ---
+  const generateDescription = async (index) => {
+    const experience = data[index];
+
+    // Validate required fields before calling the API
+    if (!experience.position || !experience.company) {
+      toast.error("Please fill in the Company Name and Job Title first.");
+      return;
+    }
+
+    setGeneratingIndex(index);
+
+    // Construct the prompt clearly
+    const prompt = `enhance this job description ${experience.description} for the position of ${experience.position} at ${experience.company}.`;
+
+    try {
+      const { data: responseData } = await api.post(
+        "/api/ai/enhance-job-desc",
+        {
+          // **BUG FIX: Now using promptContent to match the refactored backend controller**
+          promptContent: prompt,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      // Use the response data's key
+      updateExperience(index, "description", responseData.enhancedContent);
+      toast.success("Job description enhanced successfully!");
+    } catch (error) {
+      // Improved error handling
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to generate description.";
+      toast.error(errorMessage);
+    } finally {
+      setGeneratingIndex(-1);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -89,9 +109,7 @@ const ExperienceForm = ({ data, onChange }) => {
 
       {/* Conditional Rendering: Show message if no data exists */}
       {data.length === 0 ? (
-        // NOTE: The block below has a syntax error in the original code (calling ExperienceForm with JSX).
-        // It should render the JSX directly without calling the component function.
-        // Assuming the intent was to render the div:
+        // Corrected JSX for the empty state
         <div className="text-center py-8 text-gray-500">
           <Briefcase className="w-12 h-12 mx-auto mb-3 text-gray-300" />
           <p>No work experience added yet.</p>
@@ -168,9 +186,8 @@ const ExperienceForm = ({ data, onChange }) => {
                   type="checkbox"
                   checked={experience.is_current || false}
                   onChange={(e) => {
-                    // Update state with boolean value from checkbox
+                    // updateExperience handles clearing end_date if checked
                     updateExperience(index, "is_current", e.target.checked);
-                    // SUGGESTION: If checked, consider clearing the 'end_date' field for clean data.
                   }}
                   className="rounded border-r-gray-300 text-blue-600 focus:ring-blue-500"
                 />
@@ -186,9 +203,21 @@ const ExperienceForm = ({ data, onChange }) => {
                     Job Description
                   </label>
 
-                  {/* AI Enhance Button (Placeholder) */}
-                  <button className="flex itc gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors disabled:opacity-50">
-                    <Sparkles className="w-3 h-3" />
+                  {/* AI Enhance Button */}
+                  <button
+                    onClick={() => generateDescription(index)}
+                    disabled={
+                      generatingIndex === index ||
+                      !experience.position ||
+                      !experience.company
+                    }
+                    className="flex itc gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors disabled:opacity-50"
+                  >
+                    {generatingIndex === index ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-3 h-3" />
+                    )}
                     Enhance with AI
                   </button>
                 </div>

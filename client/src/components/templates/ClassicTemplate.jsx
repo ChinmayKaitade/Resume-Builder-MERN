@@ -1,25 +1,7 @@
 import { Mail, Phone, MapPin, Linkedin, Globe } from "lucide-react";
 import React from "react";
 
-/**
- * @component ClassicTemplate 📄
- * @description A traditional, single-column resume template. It maps the structured
- * resume data (`data` prop) into a professionally formatted document, using
- * `accentColor` for visual emphasis on headings and lines.
- *
- * @param {object} props
- * @param {object} props.data - The complete resume data object.
- * @param {string} props.accentColor - Hex code for the primary color theme.
- */
 const ClassicTemplate = ({ data, accentColor }) => {
-  // --- Utility Function ---
-
-  /**
-   * @function formatDate
-   * Converts a YYYY-MM string (from input type="month") to a display format (e.g., "Jan 2024").
-   * @param {string} dateStr - The date string in "YYYY-MM" format.
-   * @returns {string} Formatted date string or an empty string if null.
-   */
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
     // Destructure the year and month components.
@@ -31,8 +13,6 @@ const ClassicTemplate = ({ data, accentColor }) => {
       month: "short",
     });
   };
-
-  // --- Rendered Template UI ---
 
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white text-gray-800 leading-relaxed">

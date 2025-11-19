@@ -1,25 +1,7 @@
 import { Mail, Phone, MapPin, Linkedin, Globe } from "lucide-react";
 import React from "react";
 
-/**
- * @component ModernTemplate 🚀
- * @description A clean, modern resume template featuring a full-width header block
- * colored by the accent color for high visual impact. Uses time-line styling for
- * experience and tag-style skills display.
- *
- * @param {object} props
- * @param {object} props.data - The complete resume data object.
- * @param {string} props.accentColor - Hex code for the primary color theme.
- */
 const ModernTemplate = ({ data, accentColor }) => {
-  // --- Utility Function ---
-
-  /**
-   * @function formatDate
-   * Converts a YYYY-MM date string to a short display format (e.g., "Jan 2024").
-   * @param {string} dateStr - The date string in "YYYY-MM" format.
-   * @returns {string} Formatted date string or an empty string if null.
-   */
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
     const [year, month] = dateStr.split("-");
@@ -29,8 +11,6 @@ const ModernTemplate = ({ data, accentColor }) => {
       month: "short",
     });
   };
-
-  // --- Rendered Template UI ---
 
   return (
     <div className="max-w-4xl mx-auto bg-white text-gray-800">

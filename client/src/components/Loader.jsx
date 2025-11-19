@@ -1,11 +1,5 @@
 import React from "react";
 
-/**
- * @component Loader 🔄
- * @description A simple, purely presentational component that displays a spinning
- * circle animation to indicate that content is currently being loaded or processed.
- * Uses CSS (Tailwind) classes for styling and animation, avoiding external dependencies.
- */
 const Loader = () => {
   return (
     // Outer container: Centers the loader vertically and horizontally on the screen.

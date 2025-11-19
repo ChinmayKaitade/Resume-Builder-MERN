@@ -1,25 +1,7 @@
 import { Mail, Phone, MapPin } from "lucide-react";
 import React from "react";
 
-/**
- * @component MinimalImageTemplate 🖼️
- * @description A modern, two-column resume template with a focus on visual
- * separation and a prominent, circular profile image. Displays contact and
- * education data in a left sidebar.
- *
- * @param {object} props
- * @param {object} props.data - The complete resume data object.
- * @param {string} props.accentColor - Hex code for the primary color theme.
- */
 const MinimalImageTemplate = ({ data, accentColor }) => {
-  // --- Utility Function ---
-
-  /**
-   * @function formatDate
-   * Converts a YYYY-MM string (from input type="month") to a display format (e.g., "Jan 2024").
-   * @param {string} dateStr - The date string in "YYYY-MM" format.
-   * @returns {string} Formatted date string or an empty string if null.
-   */
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
     const [year, month] = dateStr.split("-");
@@ -30,7 +12,6 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
     });
   };
 
-  // --- Rendered Template UI ---
 
   return (
     <div className="max-w-5xl mx-auto bg-white text-zinc-800">
