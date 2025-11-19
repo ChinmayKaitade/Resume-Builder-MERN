@@ -125,7 +125,6 @@ const ResumeBuilder = () => {
       navigator
         .share({
           url: resumeUrl,
-          text: "My Resume",
         })
         .then(() => console.log("Successful share"))
         .catch((error) => {
