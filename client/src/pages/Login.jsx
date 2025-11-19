@@ -1,4 +1,4 @@
-import { Lock, Mail, User2Icon } from "lucide-react";
+import { Lock, Mail, User2Icon, LoaderCircleIcon } from "lucide-react";
 import React from "react";
 import api from "../configs/api";
 import { useDispatch } from "react-redux";
@@ -10,14 +10,11 @@ const Login = () => {
 
   // Retrieves query parameters from the URL (e.g., ?state=register).
   const query = new URLSearchParams(window.location.search);
-  // Extracts the 'state' parameter value (e.g., 'login' or 'register').
   const urlState = query.get("state");
 
-  // State to control the form's mode: 'login' or 'register'.
-  // Defaults to the URL state if present, otherwise defaults to 'login'.
   const [state, setState] = React.useState(urlState || "login");
+  const [isLoading, setIsLoading] = React.useState(false); // State to control button loading/disabling
 
-  // State to hold form data (Name, Email, Password).
   const [formData, setFormData] = React.useState({
     name: "",
     email: "",
@@ -26,19 +23,23 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start loading
+
     try {
       const { data } = await api.post(`/api/users/${state}`, formData);
       dispatch(login(data));
       localStorage.setItem("token", data.token);
       toast.success(data.message);
     } catch (error) {
-      toast(error?.response?.data?.message || error.message);
+      // Use toast.error for explicit failure notification
+      toast.error(error?.response?.data?.message || error.message);
+    } finally {
+      setIsLoading(false); // Stop loading regardless of success or failure
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Uses the input's 'name' attribute dynamically to update the state key.
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -49,18 +50,18 @@ const Login = () => {
         onSubmit={handleSubmit}
         className="sm:w-[350px] w-full text-center border border-gray-300/60 rounded-2xl px-8 bg-white"
       >
-        {/* Dynamic Title based on current state ('Login' or 'Sign up') */}
+        {/* Dynamic Title */}
         <h1 className="text-gray-900 text-3xl mt-10 font-medium">
           {state === "login" ? "Login" : "Sign up"}
         </h1>
-        {/* Dynamic subtitle */}
-        <p className="text-gray-500 text-sm mt-2">Please {state} to Continue</p>
+        <p className="text-gray-500 text-sm mt-2">
+          Please {state === "login" ? "login" : "sign up"} to Continue
+        </p>
 
         {/* Name Input Field: Only rendered in 'Sign up' mode */}
         {state !== "login" && (
           <div className="flex items-center mt-6 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
             <User2Icon size={16} color="#6B7280" />
-
             <input
               type="text"
               name="name"
@@ -73,10 +74,9 @@ const Login = () => {
           </div>
         )}
 
-        {/* Email Input Field (Visible in both modes) */}
+        {/* Email Input Field */}
         <div className="flex items-center w-full mt-4 bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
           <Mail size={13} color="#6B7280" />
-
           <input
             type="email"
             name="email"
@@ -88,10 +88,9 @@ const Login = () => {
           />
         </div>
 
-        {/* Password Input Field (Visible in both modes) */}
+        {/* Password Input Field */}
         <div className="flex items-center mt-4 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
           <Lock size={13} color="#6B7280" />
-
           <input
             type="password"
             name="password"
@@ -110,30 +109,36 @@ const Login = () => {
           </button>
         </div>
 
-        {/* Primary Submit Button (Dynamic text) */}
+        {/* Primary Submit Button with Loading State */}
         <button
           type="submit"
-          className="mt-2 w-full h-11 rounded-full text-white bg-green-500 hover:opacity-90 transition-opacity"
+          disabled={isLoading} // Disable button while loading
+          className="mt-2 w-full h-11 rounded-full text-white bg-green-500 hover:opacity-90 transition-opacity flex items-center justify-center"
         >
-          {state === "login" ? "Login" : "Sign up"}
+          {isLoading ? (
+            <>
+              {/* Show spinner when loading */}
+              <LoaderCircleIcon className="animate-spin size-4 mr-2" />
+              Please Wait...
+            </>
+          ) : state === "login" ? (
+            "Login"
+          ) : (
+            "Sign up"
+          )}
         </button>
 
-        {/* State Toggle Link: Switches between 'login' and 'register' modes */}
+        {/* State Toggle Link */}
         <p
           onClick={() =>
             setState((prev) => (prev === "login" ? "register" : "login"))
           }
-          className="text-gray-500 text-sm mt-3 mb-11"
+          className="text-gray-500 text-sm mt-3 mb-11 cursor-pointer"
         >
           {/* Dynamic question and link */}
           {state === "login"
             ? "Don't have an Account?"
             : "Already have an Account?"}{" "}
-          {/*
-            SUGGESTION: For better accessibility and SEO, consider using a
-            <Link to={...} /> from React Router or a full <a> tag with a calculated
-            href here, instead of just <a> with href="#".
-          */}
           <a href="#" className="text-green-500 hover:underline">
             Click Here
           </a>
