@@ -10,7 +10,7 @@ const Footer = () => {
         {/* Main Content Wrapper: Contains Logo and all Navigation Columns */}
         <div className="flex flex-wrap items-start gap-10 md:gap-[60px] xl:gap-[140px]">
           {/* Logo/Branding Link */}
-          <a href="https://github.com/ChinmayKaitade">
+          <a href="https://resume-builder-ai-mern.vercel.app/">
             <img
               src="./logo.svg"
               alt="Resume Builder Logo" // Good practice: descriptive alt text
@@ -211,7 +211,10 @@ const Footer = () => {
           {/* Copyright Notice: Uses the dynamically calculated current year */}
           <p className="mt-3 text-center">
             © {currentYear}{" "}
-            <a href="https://github.com/ChinmayKaitade" target="_blank">
+            <a
+              href="https://chinmaykaitadeportfolio.vercel.app/"
+              target="_blank"
+            >
               Made By ❤️‍🔥 with Chinmay Kaitade
             </a>
           </p>
